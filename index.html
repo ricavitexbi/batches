@@ -844,14 +844,13 @@
                 
                 loadBtn.innerHTML = '✅ Dados Carregados';
                 loadBtn.classList.add('success');
-                statusText.textContent = `${ordersData.length} ordens carregadas. Pronto para otimização.`;
+                statusText.textContent = `${ordersData.length} ordens carregadas. Clique em "Executar Otimização" para processar.`;
                 
-                document.getElementById('optimizeBtn').disabled = false;
+                // Habilitar botão de otimização
+                const optimizeBtn = document.getElementById('optimizeBtn');
+                optimizeBtn.disabled = false;
+                optimizeBtn.style.animation = 'pulse 2s infinite';
                 
-                // Auto-run optimization after 2 seconds
-                setTimeout(() => {
-                    runOptimization();
-                }, 2000);
             }, 2000);
         }
 
