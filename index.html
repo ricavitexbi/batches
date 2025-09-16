@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRROS - Sequenciamento de Autoclave [DEMO]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a2332;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: #1a2332;
+            padding: 12px 20px;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .demo-badge {
+            background: #e53e3e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #232d3f;
+            padding: 20px;
+            border-right: 1px solid #2d3748;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #718096;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: #2d3748;
+            color: white;
+        }
+
+        .menu-item .icon {
+            margin-right: 12px;
+            width: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            background: #1a2332;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .demo-controls {
+            padding: 20px 30px;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .demo-btn {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover {
+            background: #2c5aa0;
+        }
+
+        .demo-btn.success {
+            background: #38a169;
+        }
+
+        .demo-btn.success:hover {
+            background: #2f855a;
+        }
+
+        .config-panel {
+            padding: 20px 30px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .config-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-label {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .config-select, .config-input {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .data-section {
+            padding: 20px 30px;
+        }
+
+        .table-container {
+            background: #232d3f;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #2d3748;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #e2e8f0;
+            border-bottom: 1px solid #4a5568;
+            position: sticky;
+            top: 0;
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #4a5568;
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+
+        .table tr:hover {
+            background: #2d3748;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-urgent {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .status-normal {
+            background: #38a169;
+            color: white;
+        }
+
+        .status-medium {
+            background: #dd6b20;
+            color: white;
+        }
+
+        .results-section {
+            padding: 20px 30px;
+        }
+
+        .charts-container {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .chart-card {
+            background: #232d3f;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .metric-card.original {
+            background: #e53e3e;
+        }
+
+        .metric-card.optimized {
+            background: #3182ce;
+        }
+
+        .metric-card.economy {
+            background: #d69e2e;
+        }
+
+        .metric-card.percentage {
+            background: #38a169;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .batch-results {
+            background: #232d3f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .batch-card {
+            background: #2d3748;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #38a169;
+            transition: all 0.2s ease;
+        }
+
+        .batch-card:hover {
+            background: #353f4f;
+        }
+
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .batch-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .batch-volume {
+            background: #38a169;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #4a5568;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #38a169;
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .batch-orders {
+            color: #a0aec0;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #4a5568;
+            border-radius: 50%;
+            border-top-color: #3182ce;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            🔬 SIRROS
+            <span class="demo-badge">DEMO</span>
+        </div>
+        <div class="user-info">
+            <span>Sirros - Bree</span>
+            <span>🇧🇷</span>
+            <span>👤</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="menu-section">
+                <div class="menu-title">Sequenciamento de Autoclave</div>
+                <div class="menu-item active">
+                    <span class="icon">📋</span>
+                    <span>Sequenciamento de batches</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Relatórios</div>
+                <div class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Histórico de Sequenciamento</span>
+                </div>
+                <div class="menu-item">
+                    <span class="icon">📈</span>
+                    <span>Análise de Ocupação</span>
+                </div>
+                <div class="menu-item">
+                    <span class="icon">⏱️</span>
+                    <span>Produtividade</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Content Header -->
+            <div class="content-header">
+                <h1 class="page-title">Sequenciamento de Autoclave</h1>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #a0aec0;">Regra de negócio</div>
+                        <div style="font-size: 14px; font-weight: 600;">Maximizar ocupação:</div>
+                        <div style="font-size: 14px;">Volume otimizado</div>
+                        <div style="font-size: 14px;">Por temperatura:</div>
+                        <div style="font-size: 14px;">Sim</div>
+                    </div>
+                    <div style="background: #2d3748; padding: 10px; border-radius: 6px;">⚙️</div>
+                </div>
+            </div>
+
+            <!-- Demo Controls -->
+            <div class="demo-controls">
+                <button class="demo-btn" id="loadDataBtn" onclick="loadDemoData()">
+                    📁 Carregar Dados Demo
+                </button>
+                <button class="demo-btn" id="optimizeBtn" onclick="runOptimization()" disabled>
+                    🚀 Executar Otimização
+                </button>
+                <span id="statusText" style="color: #a0aec0; font-size: 14px;">Aguardando dados...</span>
+            </div>
+
+            <!-- Configuration Panel -->
+            <div class="config-panel">
+                <div class="config-title">Configurações da Autoclave</div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label class="config-label">Volume Total (L)</label>
+                        <input type="number" class="config-input" id="volumeAutoclave" value="600">
+                    </div>
+                    <div class="config-item">
+                        <label class="config-label">Ocupação Mínima (%)</label>
+                        <input type="number" class="config-input" id="ocupacaoMinima" value="70">
+                    </div>
+                    <div class="config-item">
+                        <label class="config-label">Priorização</label>
+                        <select class="config-select" id="priorizacao">
+                            <option value="data_entrega">Data de Entrega</option>
+                            <option value="volume">Volume</option>
+                            <option value="temperatura">Temperatura</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label class="config-label">Estratégia</label>
+                        <select class="config-select" id="estrategia">
+                            <option value="temperatura_primeiro">Temperatura Primeiro</option>
+                            <option value="prazo_primeiro">Prazo Primeiro</option>
+                            <option value="volume_primeiro">Volume Primeiro</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Section -->
+            <div class="data-section">
+                <div id="ordersSection" style="display: none;">
+                    <h3 style="color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        📋 Ordens de Produção Carregadas 
+                        <span id="orderCount" style="background: rgba(33, 150, 243, 0.2); padding: 5px 15px; border-radius: 20px; font-size: 12px;"></span>
+                    </h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Ordem</th>
+                                    <th>Material</th>
+                                    <th>Descrição</th>
+                                    <th>Volume (L)</th>
+                                    <th>Temperatura</th>
+                                    <th>Data Entrega</th>
+                                    <th>Prioridade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" style="display: none;">
+                    <div class="results-section">
+                        <!-- Chart -->
+                        <div class="chart-card">
+                            <div class="chart-title">Performance dos Batches vs Meta de Ocupação</div>
+                            <div class="chart-container">
+                                <div id="volumeChart" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Cards -->
+                        <div class="metrics-grid">
+                            <div class="metric-card original">
+                                <div class="metric-label">Batches Original</div>
+                                <div class="metric-value" id="batchesOriginal">--</div>
+                            </div>
+                            <div class="metric-card optimized">
+                                <div class="metric-label">Batches Otimizado</div>
+                                <div class="metric-value" id="batchesOptimized">--</div>
+                            </div>
+                            <div class="metric-card economy">
+                                <div class="metric-label">Redução de Batches</div>
+                                <div class="metric-value" id="batchesReduction">--</div>
+                            </div>
+                            <div class="metric-card percentage">
+                                <div class="metric-label">Ocupação Média</div>
+                                <div class="metric-value" id="averageOccupancy">--</div>
+                            </div>
+                        </div>
+
+                        <!-- Batch Results -->
+                        <div class="batch-results">
+                            <h3 style="color: white; margin-bottom: 15px;">📦 Batches Otimizados</h3>
+                            <div id="batchesContainer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ordersData = [];
+        let optimizationResults = null;
+
+        // Auto-load demo data on page load
+        window.addEventListener('load', function() {
+            console.log('Página carregada');
+            // Garantir que ordersData seja um array vazio inicialmente
+            ordersData = [];
+            optimizationResults = null;
+            
+            setTimeout(() => {
+                try {
+                    loadDemoData();
+                } catch (error) {
+                    console.error('Erro ao inicializar:', error);
+                }
+            }, 1000);
+        });
+
+        function loadDemoData() {
+            const loadBtn = document.getElementById('loadDataBtn');
+            const statusText = document.getElementById('statusText');
+            
+            loadBtn.innerHTML = '<span class="loading"></span> Carregando...';
+            loadBtn.disabled = true;
+            statusText.textContent = 'Carregando dados de demonstração...';
+            
+            setTimeout(() => {
+                // Dados de demonstração mais extensos - 20 ordens
+                ordersData = [
+                    {
+                        ordem: "OP001",
+                        material: "300948",
+                        descricao: "BTR 20,00 9254A 5690 FX50 PANDROL",
+                        volume: 120,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-20",
+                        prioridade: calculatePriority("2025-09-20")
+                    },
+                    {
+                        ordem: "OP002",
+                        material: "268264",
+                        descricao: "BTR 20,90 HK60 1400 FX29 MBT1731",
+                        volume: 150,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-18",
+                        prioridade: calculatePriority("2025-09-18")
+                    },
+                    {
+                        ordem: "OP003",
+                        material: "286209",
+                        descricao: "BTR 20,95 38MN6 D 1399 FX35 MUBEA",
+                        volume: 200,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-25",
+                        prioridade: calculatePriority("2025-09-25")
+                    },
+                    {
+                        ordem: "OP004",
+                        material: "288242",
+                        descricao: "BTR 20,40 HK60 D 1305 FX29 MBT1734",
+                        volume: 80,
+                        temperatura: 160,
+                        dataEntrega: "2025-09-17",
+                        prioridade: calculatePriority("2025-09-17")
+                    },
+                    {
+                        ordem: "OP005",
+                        material: "286208",
+                        descricao: "BTR 19,95 38MN6 D 1399 FX35 MUBEA",
+                        volume: 110,
+                        temperatura: 160,
+                        dataEntrega: "2025-09-22",
+                        prioridade: calculatePriority("2025-09-22")
+                    },
+                    {
+                        ordem: "OP006",
+                        material: "275431",
+                        descricao: "BTR 25,40 1020A 6000 FX26 MI",
+                        volume: 90,
+                        temperatura: 160,
+                        dataEntrega: "2025-09-19",
+                        prioridade: calculatePriority("2025-09-19")
+                    },
+                    {
+                        ordem: "OP007",
+                        material: "198765",
+                        descricao: "BTR 31,75 1045 H9 6000 RDP",
+                        volume: 140,
+                        temperatura: 200,
+                        dataEntrega: "2025-09-24",
+                        prioridade: calculatePriority("2025-09-24")
+                    },
+                    {
+                        ordem: "OP008",
+                        material: "334521",
+                        descricao: "BTR 30,00 31CRV3 6000 FX35 MI",
+                        volume: 170,
+                        temperatura: 200,
+                        dataEntrega: "2025-09-21",
+                        prioridade: calculatePriority("2025-09-21")
+                    },
+                    {
+                        ordem: "OP009",
+                        material: "445678",
+                        descricao: "BTR 22,50 1070 6000 FX40 PANDROL",
+                        volume: 95,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-23",
+                        prioridade: calculatePriority("2025-09-23")
+                    },
+                    {
+                        ordem: "OP010",
+                        material: "556789",
+                        descricao: "BTR 28,00 38MN6 D 1500 FX35 MUBEA",
+                        volume: 130,
+                        temperatura: 160,
+                        dataEntrega: "2025-09-26",
+                        prioridade: calculatePriority("2025-09-26")
+                    },
+                    {
+                        ordem: "OP011",
+                        material: "667890",
+                        descricao: "BTR 26,75 HK60 1450 FX29 MBT1735",
+                        volume: 185,
+                        temperatura: 200,
+                        dataEntrega: "2025-09-27",
+                        prioridade: calculatePriority("2025-09-27")
+                    },
+                    {
+                        ordem: "OP012",
+                        material: "778901",
+                        descricao: "BTR 24,00 1045 H9 6000 RDP",
+                        volume: 160,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-28",
+                        prioridade: calculatePriority("2025-09-28")
+                    },
+                    {
+                        ordem: "OP013",
+                        material: "889012",
+                        descricao: "BTR 21,50 31CRV3 6000 FX35 MI",
+                        volume: 75,
+                        temperatura: 160,
+                        dataEntrega: "2025-09-16",
+                        prioridade: calculatePriority("2025-09-16")
+                    },
+                    {
+                        ordem: "OP014",
+                        material: "990123",
+                        descricao: "BTR 29,25 9254A 5690 FX50 PANDROL",
+                        volume: 145,
+                        temperatura: 200,
+                        dataEntrega: "2025-09-29",
+                        prioridade: calculatePriority("2025-09-29")
+                    },
+                    {
+                        ordem: "OP015",
+                        material: "101234",
+                        descricao: "BTR 23,80 1020A 6000 FX26 MI",
+                        volume: 105,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-30",
+                        prioridade: calculatePriority("2025-09-30")
+                    },
+                    {
+                        ordem: "OP016",
+                        material: "212345",
+                        descricao: "BTR 27,60 HK60 D 1305 FX29 MBT1736",
+                        volume: 120,
+                        temperatura: 160,
+                        dataEntrega: "2025-10-01",
+                        prioridade: calculatePriority("2025-10-01")
+                    },
+                    {
+                        ordem: "OP017",
+                        material: "323456",
+                        descricao: "BTR 25,00 38MN6 D 1399 FX35 MUBEA",
+                        volume: 190,
+                        temperatura: 200,
+                        dataEntrega: "2025-10-02",
+                        prioridade: calculatePriority("2025-10-02")
+                    },
+                    {
+                        ordem: "OP018",
+                        material: "434567",
+                        descricao: "BTR 30,50 1045 H9 6000 RDP",
+                        volume: 85,
+                        temperatura: 180,
+                        dataEntrega: "2025-09-17",
+                        prioridade: calculatePriority("2025-09-17")
+                    },
+                    {
+                        ordem: "OP019",
+                        material: "545678",
+                        descricao: "BTR 22,00 31CRV3 6000 FX35 MI",
+                        volume: 155,
+                        temperatura: 160,
+                        dataEntrega: "2025-10-03",
+                        prioridade: calculatePriority("2025-10-03")
+                    },
+                    {
+                        ordem: "OP020",
+                        material: "656789",
+                        descricao: "BTR 26,25 9254A 5690 FX50 PANDROL",
+                        volume: 125,
+                        temperatura: 180,
+                        dataEntrega: "2025-10-04",
+                        prioridade: calculatePriority("2025-10-04")
+                    }
+                ];
+                
+                displayOrders();
+                document.getElementById('ordersSection').style.display = 'block';
+                
+                loadBtn.innerHTML = '✅ Dados Carregados';
+                loadBtn.classList.add('success');
+                statusText.textContent = `${ordersData.length} ordens carregadas. Pronto para otimização.`;
+                
+                document.getElementById('optimizeBtn').disabled = false;
+                
+                // Auto-run optimization after 2 seconds
+                setTimeout(() => {
+                    runOptimization();
+                }, 2000);
+            }, 2000);
+        }
+
+        function calculatePriority(dataEntrega) {
+            try {
+                const hoje = new Date();
+                const entrega = new Date(dataEntrega);
+                const diasRestantes = Math.ceil((entrega - hoje) / (1000 * 60 * 60 * 24));
+                
+                if (diasRestantes <= 2) return 'urgent';
+                if (diasRestantes <= 5) return 'medium';
+                return 'normal';
+            } catch (error) {
+                console.error('Erro ao calcular prioridade:', error);
+                return 'normal';
+            }
+        }
+
+        function displayOrders() {
+            const tbody = document.getElementById('ordersTable');
+            const orderCount = document.getElementById('orderCount');
+            
+            // Verificar se ordersData existe e é um array
+            if (!ordersData || !Array.isArray(ordersData)) {
+                console.error('ordersData não é um array válido:', ordersData);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0aec0;">Nenhuma ordem carregada</td></tr>';
+                orderCount.textContent = '0 ordens';
+                return;
+            }
+            
+            orderCount.textContent = `${ordersData.length} ordens`;
+            
+            tbody.innerHTML = ordersData.map(order => `
+                <tr>
+                    <td>${order.ordem || '--'}</td>
+                    <td>${order.material || '--'}</td>
+                    <td>${order.descricao || '--'}</td>
+                    <td><strong>${order.volume || 0}L</strong></td>
+                    <td>${order.temperatura || '--'}°C</td>
+                    <td>${order.dataEntrega || '--'}</td>
+                    <td><span class="status-badge status-${order.prioridade || 'normal'}">${order.prioridade || 'normal'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function runOptimization() {
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            const statusText = document.getElementById('statusText');
+            
+            optimizeBtn.innerHTML = '<span class="loading"></span> Otimizando...';
+            optimizeBtn.disabled = true;
+            statusText.textContent = 'Executando algoritmo de otimização...';
+            
+            setTimeout(() => {
+                try {
+                    console.log('Iniciando simulação de otimização...');
+                    
+                    // Pegar valores de configuração
+                    const volumeAutoclave = parseInt(document.getElementById('volumeAutoclave').value);
+                    const ocupacaoMinima = parseInt(document.getElementById('ocupacaoMinima').value);
+                    
+                    // Simular resultado da otimização
+                    const batches = simulateOptimization(ordersData, volumeAutoclave, ocupacaoMinima);
+                    
+                    // Criar objeto de resultados com dados simulados
+                    const originalBatches = Math.ceil(ordersData.length * 1.5); // Simular cenário não otimizado
+                    optimizationResults = {
+                        batchesOriginal: originalBatches,
+                        batchesOptimized: batches.length,
+                        batchesReduction: originalBatches - batches.length,
+                        averageOccupancy: Math.round(
+                            batches.reduce((acc, b) => acc + b.ocupacao, 0) / batches.length
+                        ),
+                        batches: batches
+                    };
+                    
+                    console.log('Resultados da otimização:', optimizationResults);
+                    
+                    // Exibir resultados
+                    displayResults();
+                    
+                    // Criar gráfico
+                    createCharts();
+                    
+                    optimizeBtn.innerHTML = '✅ Otimização Concluída';
+                    optimizeBtn.classList.add('success');
+                    statusText.textContent = 'Otimização concluída com sucesso!';
+                    
+                    document.getElementById('resultsSection').style.display = 'block';
+                    
+                    // Smooth scroll to results
+                    setTimeout(() => {
+                        document.getElementById('resultsSection').scrollIntoView({ 
+                            behavior: 'smooth' 
+                        });
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Erro durante otimização:', error);
+                    statusText.textContent = 'Erro durante processo de otimização: ' + error.message;
+                    optimizeBtn.innerHTML = '❌ Erro na Otimização';
+                }
+            }, 3000);
+        }
+
+        function simulateOptimization(orders, volumeAutoclave, ocupacaoMinima) {
+            // Agrupar por temperatura primeiro (simulação simplificada)
+            const tempGroups = {};
+            orders.forEach(order => {
+                if (!tempGroups[order.temperatura]) {
+                    tempGroups[order.temperatura] = [];
+                }
+                tempGroups[order.temperatura].push(order);
+            });
+            
+            // Criar batches otimizados
+            const batches = [];
+            let batchId = 1;
+            
+            for (const temp in tempGroups) {
+                const ordersAtTemp = tempGroups[temp];
+                let currentBatch = {
+                    id: batchId++,
+                    temperatura: temp,
+                    volumeAutoclave: volumeAutoclave,
+                    volumeTotal: 0,
+                    ocupacao: 0,
+                    ordensDetalhes: []
+                };
+                
+                for (const order of ordersAtTemp) {
+                    if (currentBatch.volumeTotal + order.volume <= volumeAutoclave) {
+                        currentBatch.volumeTotal += order.volume;
+                        currentBatch.ordensDetalhes.push(order);
+                    } else {
+                        // Finalizar batch atual e criar novo
+                        currentBatch.ocupacao = Math.round((currentBatch.volumeTotal / volumeAutoclave) * 100);
+                        batches.push(currentBatch);
+                        
+                        currentBatch = {
+                            id: batchId++,
+                            temperatura: temp,
+                            volumeAutoclave: volumeAutoclave,
+                            volumeTotal: order.volume,
+                            ocupacao: 0,
+                            ordensDetalhes: [order]
+                        };
+                    }
+                }
+                
+                // Adicionar último batch se tiver ordens
+                if (currentBatch.ordensDetalhes.length > 0) {
+                    currentBatch.ocupacao = Math.round((currentBatch.volumeTotal / volumeAutoclave) * 100);
+                    batches.push(currentBatch);
+                }
+            }
+            
+            return batches;
+        }
+
+        function displayResults() {
+            // Animate metrics
+            animateCounter('batchesOriginal', optimizationResults.batchesOriginal);
+            animateCounter('batchesOptimized', optimizationResults.batchesOptimized);
+            animateCounter('batchesReduction', optimizationResults.batchesReduction);
+            animateCounter('averageOccupancy', optimizationResults.averageOccupancy, '%');
+            
+            // Display batches
+            const batchesContainer = document.getElementById('batchesContainer');
+            batchesContainer.innerHTML = optimizationResults.batches.map(batch => `
+                <div class="batch-card">
+                    <div class="batch-header">
+                        <div class="batch-title">Batch ${batch.id} - ${batch.temperatura}°C</div>
+                        <div class="batch-volume">${batch.volumeTotal}L (${batch.ocupacao}%)</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${batch.ocupacao}%"></div>
+                    </div>
+                    <div class="batch-orders">
+                        <strong>Ordens:</strong> ${batch.ordensDetalhes.map(o => `${o.ordem} (${o.volume}L)`).join(', ')}<br>
+                        <strong>Capacidade:</strong> ${batch.volumeAutoclave}L | <strong>Utilização:</strong> ${batch.volumeTotal}L
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function animateCounter(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            if (!element || typeof targetValue === 'undefined') {
+                console.warn(`Elemento ${elementId} não encontrado ou valor inválido:`, targetValue);
+                return;
+            }
+            
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(progress * targetValue);
+                
+                element.textContent = currentValue + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        function createCharts() {
+            console.log('createCharts iniciado');
+            try {
+                const container = document.getElementById('volumeChart');
+                if (!container) {
+                    console.error('Container do gráfico não encontrado');
+                    return;
+                }
+                
+                // Limpar container antes de criar o gráfico
+                container.innerHTML = '';
+                
+                // Configurações do gráfico otimizadas para evitar sobreposição
+                const width = 900;
+                const height = 350;
+                const marginLeft = 70;
+                const marginRight = 120;
+                const marginTop = 50;
+                const marginBottom = 50;
+                const chartWidth = width - marginLeft - marginRight;
+                const chartHeight = height - marginTop - marginBottom;
+                
+                // Gerar pontos baseados nos batches reais
+                let batchPoints = '';
+                let xAxisLabels = '';
+                let connectingLine = '';
+                let dataPointLabels = '';
+                
+                if (optimizationResults && optimizationResults.batches) {
+                    const numBatches = optimizationResults.batches.length;
+                    const xSpacing = Math.min(chartWidth / (numBatches + 1), 80); // Limitar espaçamento máximo
+                    
+                    // Criar linha conectando os pontos
+                    let linePoints = '';
+                    
+                    optimizationResults.batches.forEach((batch, index) => {
+                        const x = marginLeft + xSpacing * (index + 1);
+                        // Calcular posição Y baseada na ocupação
+                        const yScale = chartHeight / 40; // 40% range (60% to 100%)
+                        const y = marginTop + chartHeight - ((batch.ocupacao - 60) * yScale);
+                        
+                        // Determinar cor baseada na ocupação
+                        const color = batch.ocupacao >= 85 ? '#38a169' : batch.ocupacao >= 70 ? '#dd6b20' : '#e53e3e';
+                        
+                        // Adicionar ponto
+                        batchPoints += `<circle cx="${x}" cy="${y}" r="8" fill="${color}" stroke="white" stroke-width="2" opacity="0.9"/>`;
+                        
+                        // Label do batch
+                        xAxisLabels += `<text x="${x}" y="${height - 25}" text-anchor="middle" fill="#a0aec0" font-size="11">B${batch.id}</text>`;
+                        
+                        // Valor da ocupação acima do ponto
+                        dataPointLabels += `<text x="${x}" y="${y - 12}" text-anchor="middle" fill="${color}" font-size="10" font-weight="bold">${batch.ocupacao}%</text>`;
+                        
+                        // Adicionar ao caminho da linha
+                        if (index === 0) {
+                            linePoints = `M ${x} ${y}`;
+                        } else {
+                            linePoints += ` L ${x} ${y}`;
+                        }
+                    });
+                    
+                    connectingLine = `<path d="${linePoints}" stroke="#4a5568" stroke-width="2" fill="none" stroke-dasharray="5,3" opacity="0.5"/>`;
+                }
+                
+                // SVG com layout otimizado
+                const svgContent = `
+                    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display: block; margin: 0 auto;">
+                        <!-- Background -->
+                        <rect width="${width}" height="${height}" fill="#1a2332" opacity="0.5"/>
+                        
+                        <!-- Grid lines -->
+                        <g opacity="0.2">
+                            <line x1="${marginLeft}" y1="${marginTop + chartHeight}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight}" stroke="#4a5568" stroke-width="1"/>
+                            <line x1="${marginLeft}" y1="${marginTop + chartHeight * 0.75}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight * 0.75}" stroke="#4a5568" stroke-width="1"/>
+                            <line x1="${marginLeft}" y1="${marginTop + chartHeight * 0.5}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight * 0.5}" stroke="#4a5568" stroke-width="1"/>
+                            <line x1="${marginLeft}" y1="${marginTop + chartHeight * 0.25}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight * 0.25}" stroke="#4a5568" stroke-width="1"/>
+                            <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft + chartWidth}" y2="${marginTop}" stroke="#4a5568" stroke-width="1"/>
+                        </g>
+                        
+                        <!-- Axes -->
+                        <line x1="${marginLeft}" y1="${marginTop + chartHeight}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight}" stroke="#e2e8f0" stroke-width="2"/>
+                        <line x1="${marginLeft}" y1="${marginTop + chartHeight}" x2="${marginLeft}" y2="${marginTop}" stroke="#e2e8f0" stroke-width="2"/>
+                        
+                        <!-- Y-axis labels -->
+                        <text x="${marginLeft - 10}" y="${marginTop + chartHeight + 5}" text-anchor="end" fill="#a0aec0" font-size="12">60%</text>
+                        <text x="${marginLeft - 10}" y="${marginTop + chartHeight * 0.75 + 5}" text-anchor="end" fill="#a0aec0" font-size="12">70%</text>
+                        <text x="${marginLeft - 10}" y="${marginTop + chartHeight * 0.5 + 5}" text-anchor="end" fill="#a0aec0" font-size="12">80%</text>
+                        <text x="${marginLeft - 10}" y="${marginTop + chartHeight * 0.25 + 5}" text-anchor="end" fill="#a0aec0" font-size="12">90%</text>
+                        <text x="${marginLeft - 10}" y="${marginTop + 5}" text-anchor="end" fill="#a0aec0" font-size="12">100%</text>
+                        
+                        <!-- META LINE (85%) -->
+                        <line x1="${marginLeft}" y1="${marginTop + chartHeight * 0.375}" x2="${marginLeft + chartWidth}" y2="${marginTop + chartHeight * 0.375}" stroke="#d69e2e" stroke-width="2" stroke-dasharray="8,4"/>
+                        <text x="${marginLeft + chartWidth + 5}" y="${marginTop + chartHeight * 0.375 + 4}" fill="#d69e2e" font-size="11" font-weight="bold">Meta 85%</text>
+                        
+                        <!-- Connecting line -->
+                        ${connectingLine}
+                        
+                        <!-- Batch Points -->
+                        ${batchPoints}
+                        
+                        <!-- Data labels -->
+                        ${dataPointLabels}
+                        
+                        <!-- X-axis labels -->
+                        ${xAxisLabels}
+                        
+                        <!-- Axis labels -->
+                        <text x="25" y="${height/2}" text-anchor="middle" fill="#a0aec0" font-size="13" transform="rotate(-90, 25, ${height/2})">Ocupação (%)</text>
+                        <text x="${width/2}" y="${height - 5}" text-anchor="middle" fill="#a0aec0" font-size="13">Sequência de Batches</text>
+                        
+                        <!-- Legend in top area -->
+                        <g transform="translate(${marginLeft}, 10)">
+                            <rect x="0" y="0" width="450" height="25" fill="#232d3f" rx="4" opacity="0.8"/>
+                            
+                            <circle cx="15" cy="12" r="5" fill="#38a169"/>
+                            <text x="25" y="16" fill="#e2e8f0" font-size="11">≥85% Ótimo</text>
+                            
+                            <circle cx="110" cy="12" r="5" fill="#dd6b20"/>
+                            <text x="120" y="16" fill="#e2e8f0" font-size="11">70-85% Médio</text>
+                            
+                            <circle cx="210" cy="12" r="5" fill="#e53e3e"/>
+                            <text x="220" y="16" fill="#e2e8f0" font-size="11"><70% Baixo</text>
+                            
+                            <text x="320" y="16" fill="#38a169" font-size="11" font-weight="bold">Média: ${optimizationResults ? optimizationResults.averageOccupancy : '--'}%</text>
+                        </g>
+                    </svg>
+                `;
+                
+                container.innerHTML = svgContent;
+                console.log('Gráfico criado com sucesso');
+                
+            } catch (error) {
+                console.error('Erro ao criar gráfico:', error);
+                const container = document.getElementById('volumeChart');
+                if (container) {
+                    container.innerHTML = '<div style="color: #e53e3e; text-align: center; padding: 50px; font-size: 16px;">Erro ao carregar gráfico</div>';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
